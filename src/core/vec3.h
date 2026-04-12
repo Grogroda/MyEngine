@@ -98,7 +98,8 @@ using point3 = vec3;
 // Vector Utility Functions
 
 inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
-    return out << v.arr[0] << ' ' << v.arr[1] << ' ' << v.arr[2];
+	// I made a modification to this operation, this format is more familiar to me!
+    return out << '(' << v.arr[0] << ', ' << v.arr[1] << ', ' << v.arr[2] << ')';
 }
 
 inline vec3 operator+(const vec3& u, const vec3& v) {
