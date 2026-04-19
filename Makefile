@@ -17,7 +17,7 @@ RENDERER := $(BIN_DIR)/renderer
 all: $(RENDERER)
  
 # Rule to build the renderer
-$(RENDERER): $(SRC_DIR)/tracer/renderer.cpp $(SRC_DIR)/core/vec3.h $(SRC_DIR)/core/color.h
+$(RENDERER): $(SRC_DIR)/tracer/renderer.cpp $(SRC_DIR)/core/vec3.h $(SRC_DIR)/core/color.h $(SRC_DIR)/tracer/ray.h
 	mkdir -p $(ROOT_DIR)/bin
 	$(CXX) $(CXXFLAGS) $(SRC_DIR)/tracer/renderer.cpp -o $(RENDERER)
  
