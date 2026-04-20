@@ -6,12 +6,48 @@
 #include "ray.h"
 #include "color.h"
 
+bool hit_sphere(const point3& center, double radius, const ray& r) {
+	/*
+	 * Checks wether the ray r hits the surface of the sphere of given center and radius
+	 *
+	 * Note that if the ray's parametric equation is written as 
+	 * 
+	 * r(t) = O+D*t
+	 * 
+	 * Then you can check if the point r(t) hits the surface by using the sphere equation:
+	 * 
+	 * (r(t)-C)^2 = r^2
+	 * 
+	 * With C being the sphere's center point. If we expand this equation we get a quadratic
+	 * equation, so we simply use the quadratic formula to obtain the parameter values t in
+	 * which the ray crosses the sphere. a, b and c below are the quadratic terms of the
+	 * resulting quadratic equation.
+	*/
+    vec3 oc = center - r.origin(); // vector from ray origin to sphere center
+	
+    auto a = dot(r.direction(), r.direction());
+    auto b = -2.0 * dot(r.direction(), oc);
+    auto c = dot(oc, oc) - radius*radius;
+    auto discriminant = b*b - 4*a*c;
+    return (discriminant >= 0);
+}
+
 color ray_color(const ray& r) {
-	// Testing with gradient from blue to white:
+	// Gradient from blue to white:
     vec3 unit_direction = unit_vector(r.direction());
     auto a = 0.5*(unit_direction.y() + 1.0);
+
+	// Adding a red sphere:
+	if (hit_sphere(point3(0,0,-1), 0.5, r))
+        return color(1, 0, 0);
+	
+	// The return basically takes care of the background:
     return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
 }
+/* What I have just notices in the function above is that for each object 
+ * in the scene we can add an if statement checking wether a ray hits their
+ * surface or not. Everything outside the if statement composes the background.
+*/
 
 int main() {
     // Fixed aspect ratio and width:
@@ -31,7 +67,7 @@ int main() {
 	 * z-> front-to-back (- = in front, weirdly)
 	*/  
 	// Camera and viewport:
-	double focal_length  = 2.0;
+	double focal_length  = 1.0;
 	point3 camera_center = point3(0, 0, 0);
 
 	// Viewport is a virtual rectangle containing the grid of pixel positions
@@ -41,6 +77,10 @@ int main() {
 	// The following vectors indicate horizontal and vertical direction in the viewport:
 	vec3 viewport_horiz = vec3(viewport_width, 0, 0);
 	vec3 viewport_vert  = vec3(0, -viewport_height, 0);
+
+	// Notice that a higher focal_length means the viewport is further from the camera
+	// thus closer to the objects in the scene, making things appear closer/zooming
+	// in the image!
 
 	// Horizontal and vertical spacings between pixels:
 	vec3 pixel_delta_horiz = viewport_horiz/image_width;
